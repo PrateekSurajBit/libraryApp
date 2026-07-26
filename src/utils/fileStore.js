@@ -11,7 +11,7 @@ const readData = (filename) => {
     throw err;
   }
 };
-
+//getting any issue here
 const writeData = (filename, data) => {
   const filePath = path.join(__dirname, '../../data/', filename);
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
