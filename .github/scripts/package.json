@@ -1,0 +1,8 @@
+{
+  "name": "pr-review-agent",
+  "version": "1.0.0",
+  "main": "review.js",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
+  }
+}
