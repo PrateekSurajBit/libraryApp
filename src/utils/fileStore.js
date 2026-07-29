@@ -16,5 +16,5 @@ const writeData = (filename, data) => {
   const filePath = path.join(__dirname, '../../data/', filename);
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 };
-
+//some changes are made here
 module.exports = { readData, writeData };
