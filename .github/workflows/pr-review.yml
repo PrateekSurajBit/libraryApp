@@ -55,8 +55,10 @@ jobs:
         env:
           # API key for Anthropic — must be added to GitHub Settings > Secrets
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          # GitHub token (auto-injected by GitHub Actions) for API calls
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Personal Access Token (PAT) for API calls (allows APPROVE reviews)
+          # Required: GitHub Actions' default GITHUB_TOKEN cannot submit APPROVE reviews.
+          # A PAT from a real account is needed to bypass this restriction.
+          GITHUB_TOKEN: ${{ secrets.PR_REVIEW_PAT }}
           # PR number from the webhook event (e.g., 123)
           PR_NUMBER: ${{ github.event.pull_request.number }}
           # Repository owner (e.g., "PrateekSurajBit")
