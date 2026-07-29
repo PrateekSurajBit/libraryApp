@@ -1,35 +1,67 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# GitHub Actions Workflow: AI Code Review
+#
+# This workflow automatically reviews pull requests using Claude (Anthropic's AI).
+# It runs when PRs are opened, updated, or reopened, fetches the code diff, sends
+# it to Claude for analysis, and posts inline comments with feedback on specific lines.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Workflow name — displayed in the GitHub Actions tab and PR checks
 name: AI Code Review
 
+# Trigger configuration: when this workflow should run
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    # Only run for pull requests (not pushes to branches)
+    types:
+      - opened      # when a new PR is created
+      - synchronize # when new commits are pushed to the PR branch
+      - reopened    # when a closed PR is reopened
 
+# Permissions scoped for this workflow (principle of least privilege)
 permissions:
-  contents: read
-  pull-requests: write
+  contents: read       # allow reading repository files (needed for checkout)
+  pull-requests: write # allow writing PR reviews and comments (needed to post feedback)
 
+# Jobs define the work to run; this workflow has one job
 jobs:
   ai-review:
+    # Run on a fresh Ubuntu Linux container (GitHub-hosted runner)
     runs-on: ubuntu-latest
+
+    # Steps execute sequentially in the container; each runs a command or action
     steps:
+      # Step 1: Check out the repository code into the runner's workspace
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # official GitHub action to clone the repo
 
+      # Step 2: Install Node.js (required to run the review script)
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4  # official GitHub action to install Node
         with:
-          node-version: '20'
+          node-version: '20'  # use Node.js version 20 (LTS)
 
+      # Step 3: Install npm dependencies for the review script
       - name: Install dependencies
-        working-directory: .github/scripts
-        run: npm install
+        working-directory: .github/scripts  # change to the scripts directory first
+        run: npm install  # install packages listed in .github/scripts/package.json
+                          # (installs @anthropic-ai/sdk, the only dependency)
 
+      # Step 4: Run the AI review script with environment variables
       - name: Run AI code review
+        # Change to the scripts directory (same as previous step's working-directory)
         working-directory: .github/scripts
+        # Set environment variables that the review.js script will read
         env:
+          # API key for Anthropic — must be added to GitHub Settings > Secrets
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # GitHub token (auto-injected by GitHub Actions) for API calls
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # PR number from the webhook event (e.g., 123)
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          # Repository owner (e.g., "PrateekSurajBit")
           REPO_OWNER: ${{ github.repository_owner }}
+          # Repository name (e.g., "libraryApp")
           REPO_NAME: ${{ github.event.repository.name }}
-        run: node review.js
+        # Execute the review script
+        run: node review.js  # runs .github/scripts/review.js with the env vars above
