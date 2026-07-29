@@ -19,6 +19,9 @@ const addBook = (req, res) => {
     author,
     isbn: isbn || null,
     assignedTo: null,
+    durationDays: null,
+    assignedDate: null,
+    dueDate: null,
   };
 
   books.push(newBook);

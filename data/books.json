@@ -4,6 +4,9 @@
     "title": "The Pragmatic Programmer",
     "author": "David Thomas",
     "isbn": "978-0135957059",
-    "assignedTo": null
+    "assignedTo": null,
+    "durationDays": null,
+    "assignedDate": null,
+    "dueDate": null
   }
 ]

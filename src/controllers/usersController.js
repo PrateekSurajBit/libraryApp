@@ -52,9 +52,16 @@ const deleteUser = (req, res) => {
 
 const assignBook = (req, res) => {
   const { userId, bookId } = req.params;
+  let { durationDays } = req.body;
 
   const users = readData('users.json');
   const books = readData('books.json');
+
+  if (durationDays === undefined) {
+    durationDays = 14;
+  } else if (typeof durationDays !== 'number' || durationDays <= 0) {
+    return res.status(400).json({ error: 'durationDays must be a positive number' });
+  }
 
   const userIndex = users.findIndex((u) => u.id === userId);
   if (userIndex === -1) {
@@ -76,7 +83,13 @@ const assignBook = (req, res) => {
     return res.status(409).json({ error: 'Book is already assigned to this user' });
   }
 
+  const assignedDate = new Date();
+  const dueDate = new Date(assignedDate.getTime() + durationDays * 24 * 60 * 60 * 1000);
+
   books[bookIndex].assignedTo = userId;
+  books[bookIndex].durationDays = durationDays;
+  books[bookIndex].assignedDate = assignedDate.toISOString();
+  books[bookIndex].dueDate = dueDate.toISOString();
   users[userIndex].assignedBooks.push(bookId);
 
   writeData('books.json', books);
@@ -112,6 +125,9 @@ const unassignBook = (req, res) => {
   }
 
   books[bookIndex].assignedTo = null;
+  books[bookIndex].durationDays = null;
+  books[bookIndex].assignedDate = null;
+  books[bookIndex].dueDate = null;
   users[userIndex].assignedBooks = users[userIndex].assignedBooks.filter(
     (id) => id !== bookId
   );
