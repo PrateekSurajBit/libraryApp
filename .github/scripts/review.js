@@ -322,8 +322,6 @@ async function main() {
 
   let review;
   try {
-    // Claude was instructed to return raw JSON, but sometimes wraps it in markdown fences
-    // (e.g., ```json ... ```). Strip these defensively before parsing.
     let rawText = textBlock.text.trim();
 
     // Try to extract JSON from markdown code blocks if present
@@ -331,17 +329,25 @@ async function main() {
     if (jsonMatch) {
       rawText = jsonMatch[1].trim();
     } else {
-      // If no code block, try stripping leading/trailing fences
+      // If no code block found, try stripping loose fences
       rawText = rawText
         .replace(/^```json\s*/i, '')  // remove opening ```json
         .replace(/```\s*$/, '');       // remove closing ```
+    }
+
+    // Try to find the first { and last } to extract JSON in case of extra text
+    const jsonStart = rawText.indexOf('{');
+    const jsonEnd = rawText.lastIndexOf('}');
+
+    if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+      rawText = rawText.substring(jsonStart, jsonEnd + 1);
     }
 
     // Parse the JSON string into an object
     review = JSON.parse(rawText);
   } catch (err) {
     // If parsing fails, show the raw response for debugging
-    throw new Error(`Failed to parse Claude response as JSON.\nRaw output:\n${textBlock.text}`);
+    throw new Error(`Failed to parse Claude response as JSON.\nError: ${err.message}\nRaw output:\n${textBlock.text}`);
   }
 
   // Extract comments and summary from the parsed response
