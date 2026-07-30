@@ -321,8 +321,15 @@ async function main() {
   // ─────────────────────────────────────────────────────────────────────────
 
   let review;
+  const originalText = textBlock.text;
+
   try {
-    let rawText = textBlock.text.trim();
+    let rawText = originalText
+      .trim()
+      // Remove BOM (byte order mark) if present
+      .replace(/^﻿/, '')
+      // Remove any zero-width characters
+      .replace(/[​-‍﻿]/g, '');
 
     // Try to extract JSON from markdown code blocks if present
     const jsonMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)```/);
@@ -346,8 +353,14 @@ async function main() {
     // Parse the JSON string into an object
     review = JSON.parse(rawText);
   } catch (err) {
-    // If parsing fails, show the raw response for debugging
-    throw new Error(`Failed to parse Claude response as JSON.\nError: ${err.message}\nRaw output:\n${textBlock.text}`);
+    // If parsing fails, try one more time with the original text
+    try {
+      review = JSON.parse(originalText.trim());
+    } catch (fallbackErr) {
+      // Both attempts failed, throw detailed error
+      const charCodes = originalText.substring(0, 100).split('').map(c => `${c} (${c.charCodeAt(0)})`).join(', ');
+      throw new Error(`Failed to parse Claude response as JSON.\nFirst 100 chars with char codes: ${charCodes}\nError: ${err.message}\nRaw output:\n${originalText}`);
+    }
   }
 
   // Extract comments and summary from the parsed response
