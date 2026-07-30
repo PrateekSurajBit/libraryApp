@@ -219,7 +219,7 @@ Rules:
 - Prioritize: security > correctness > performance > style
 - If there are no issues, return an empty "comments" array
 
-Respond with ONLY valid JSON (no markdown fences, no text outside the JSON):
+CRITICAL: Respond with ONLY valid JSON. Do not include ANY markdown formatting, code blocks, or text outside the JSON object. Output ONLY:
 {
   "comments": [
     {
@@ -307,6 +307,7 @@ async function main() {
   const message = await client.messages.create({
     model: MODEL,  // claude-sonnet-4-6
     max_tokens: 4096,  // allow Claude to generate up to 4KB of output
+    system: 'You are a code review bot. You MUST respond with ONLY a valid JSON object. No markdown, no fences, no explanation text. Just the JSON.',
     messages: [{ role: 'user', content: prompt }],
   });
 
@@ -323,10 +324,19 @@ async function main() {
   try {
     // Claude was instructed to return raw JSON, but sometimes wraps it in markdown fences
     // (e.g., ```json ... ```). Strip these defensively before parsing.
-    const rawText = textBlock.text
-      .trim()
-      .replace(/^```json\s*/i, '')  // remove opening ```json
-      .replace(/```\s*$/, '');       // remove closing ```
+    let rawText = textBlock.text.trim();
+
+    // Try to extract JSON from markdown code blocks if present
+    const jsonMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (jsonMatch) {
+      rawText = jsonMatch[1].trim();
+    } else {
+      // If no code block, try stripping leading/trailing fences
+      rawText = rawText
+        .replace(/^```json\s*/i, '')  // remove opening ```json
+        .replace(/```\s*$/, '');       // remove closing ```
+    }
+
     // Parse the JSON string into an object
     review = JSON.parse(rawText);
   } catch (err) {
