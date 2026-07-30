@@ -22,6 +22,7 @@ const addUser = (req, res) => {
     id: `u_${Date.now()}`,
     name,
     email,
+    isAdmin: false,
     assignedBooks: [],
   };
 

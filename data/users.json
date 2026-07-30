@@ -3,30 +3,35 @@
     "id": "u_1785092294912",
     "name": "Jane Doe",
     "email": "jane@example.com",
+    "isAdmin": true,
     "assignedBooks": []
   },
   {
     "id": "u_1785092294913",
     "name": "John Smith",
     "email": "john.smith@example.com",
+    "isAdmin": false,
     "assignedBooks": []
   },
   {
     "id": "u_1785092294914",
     "name": "Alice Johnson",
     "email": "alice.j@example.com",
+    "isAdmin": false,
     "assignedBooks": []
   },
   {
     "id": "u_1785092294915",
     "name": "Bob Wilson",
     "email": "bob.wilson@example.com",
+    "isAdmin": false,
     "assignedBooks": []
   },
   {
     "id": "u_1785092294916",
     "name": "Sarah Davis",
     "email": "sarah.d@example.com",
+    "isAdmin": false,
     "assignedBooks": []
   }
 ]
