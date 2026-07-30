@@ -32,36 +32,6 @@ const addUser = (req, res) => {
   res.status(201).json(newUser);
 };
 
-const updateUser = (req, res) => {
-  const { id } = req.params;
-  const { name, address } = req.body;
-
-  if (!name && !address) {
-    return res.status(400).json({ error: 'At least one field (name or address) is required' });
-  }
-
-  const users = readData('users.json');
-  const userIndex = users.findIndex((u) => u.id === id);
-
-  if (userIndex === -1) {
-    return res.status(404).json({ error: 'User not found' });
-  }
-
-  if (name) {
-    users[userIndex].name = name;
-  }
-
-  if (address) {
-    users[userIndex].address = address;
-  }
-
-  writeData('users.json', users);
-  res.json({
-    message: 'User updated successfully',
-    user: users[userIndex],
-  });
-};
-
 const deleteUser = (req, res) => {
   const { id } = req.params;
   const users = readData('users.json');
@@ -174,4 +144,4 @@ const unassignBook = (req, res) => {
   });
 };
 
-module.exports = { getAllUsers, addUser, deleteUser, updateUser, assignBook, unassignBook };
+module.exports = { getAllUsers, addUser, deleteUser, assignBook, unassignBook };
