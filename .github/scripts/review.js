@@ -323,16 +323,26 @@ async function main() {
   let review;
   const originalText = textBlock.text;
 
+  console.log('STEP 4a: Raw response length:', originalText.length);
+  console.log('STEP 4b: First 50 chars:', JSON.stringify(originalText.substring(0, 50)));
+  console.log('STEP 4c: Last 50 chars:', JSON.stringify(originalText.substring(originalText.length - 50)));
+
   // Extract JSON from response - look for { ... } pattern
   const jsonMatch = originalText.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
     throw new Error(`Failed to find JSON object in Claude response.\nRaw output:\n${originalText}`);
   }
 
+  console.log('STEP 4d: Extracted JSON length:', jsonMatch[0].length);
+  console.log('STEP 4e: JSON starts with:', JSON.stringify(jsonMatch[0].substring(0, 100)));
+
   try {
     // Parse the extracted JSON
     review = JSON.parse(jsonMatch[0]);
+    console.log('STEP 4f: JSON parsed successfully');
+    console.log('STEP 4g: Review has', (review.comments || []).length, 'comments');
   } catch (parseErr) {
+    console.error('STEP 4f: JSON parse failed:', parseErr.message);
     throw new Error(`Failed to parse Claude response as JSON.\nError: ${parseErr.message}\nExtracted text:\n${jsonMatch[0]}`);
   }
 
@@ -340,6 +350,8 @@ async function main() {
   if (!review.comments) review.comments = [];
   if (!Array.isArray(review.comments)) review.comments = [];
   if (!review.summary) review.summary = 'AI code review complete.';
+
+  console.log('STEP 4h: Validation complete');
 
   // Extract comments and summary from the parsed response
   // Default to empty comments and generic summary if not provided
