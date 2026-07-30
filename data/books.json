@@ -8,5 +8,55 @@
     "durationDays": null,
     "assignedDate": null,
     "dueDate": null
+  },
+  {
+    "id": "b_1785092211748",
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "isbn": "978-0132350884",
+    "assignedTo": null,
+    "durationDays": null,
+    "assignedDate": null,
+    "dueDate": null
+  },
+  {
+    "id": "b_1785092211749",
+    "title": "Design Patterns",
+    "author": "Gang of Four",
+    "isbn": "978-0201633610",
+    "assignedTo": null,
+    "durationDays": null,
+    "assignedDate": null,
+    "dueDate": null
+  },
+  {
+    "id": "b_1785092211750",
+    "title": "Refactoring",
+    "author": "Martin Fowler",
+    "isbn": "978-0201485677",
+    "assignedTo": null,
+    "durationDays": null,
+    "assignedDate": null,
+    "dueDate": null
+  },
+  {
+    "id": "b_1785092211751",
+    "title": "The Mythical Man-Month",
+    "author": "Frederick P. Brooks Jr.",
+    "isbn": "978-0201835953",
+    "assignedTo": null,
+    "durationDays": null,
+    "assignedDate": null,
+    "dueDate": null
+  },
+  {
+    "id": "b_1785092211752",
+    "title": "Code Complete",
+    "author": "Steve McConnell",
+    "isbn": "978-0735619678",
+    "assignedTo": null,
+    "durationDays": null,
+    "assignedDate": null,
+    "dueDate": null
   }
 ]
