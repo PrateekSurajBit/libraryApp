@@ -320,58 +320,26 @@ async function main() {
   // STEP 4: Parse Claude's JSON Output
   // ─────────────────────────────────────────────────────────────────────────
 
-  let review = { comments: [], summary: 'AI code review complete.' };
+  let review;
   const originalText = textBlock.text;
 
-  try {
-    let rawText = originalText
-      .trim()
-      // Remove BOM (byte order mark) if present
-      .replace(/^﻿/, '')
-      // Remove any zero-width/invisible characters except newlines
-      .replace(/[​-‍﻿]/g, '');
-
-    // Try to extract JSON from markdown code blocks if present
-    let jsonMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (jsonMatch) {
-      rawText = jsonMatch[1].trim();
-    } else {
-      // If no code block found, try stripping loose fences
-      rawText = rawText
-        .replace(/^```json\s*/i, '')  // remove opening ```json
-        .replace(/```\s*$/i, '');      // remove closing ```
-    }
-
-    // Try to find the first { and last } to extract JSON in case of extra text
-    const jsonStart = rawText.indexOf('{');
-    const jsonEnd = rawText.lastIndexOf('}');
-
-    if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
-      rawText = rawText.substring(jsonStart, jsonEnd + 1);
-    }
-
-    // Clean up any remaining problematic characters
-    rawText = rawText
-      .replace(/[\r\n]/g, ' ')  // replace newlines with spaces
-      .replace(/\s+/g, ' ');    // collapse multiple spaces
-
-    // Parse the JSON string into an object
-    review = JSON.parse(rawText);
-
-    // Validate the response has the required structure
-    if (!review.comments || !Array.isArray(review.comments)) {
-      review.comments = [];
-    }
-    if (!review.summary || typeof review.summary !== 'string') {
-      review.summary = 'AI code review complete.';
-    }
-  } catch (err) {
-    // If parsing fails, log warning but continue with empty comments (results in APPROVE)
-    console.warn(`⚠️  Failed to parse Claude response as JSON: ${err.message}`);
-    console.warn(`Raw response length: ${originalText.length} characters`);
-    console.warn(`First 200 chars: ${originalText.substring(0, 200)}`);
-    review = { comments: [], summary: 'AI review encountered a parsing error but no issues were found.' };
+  // Extract JSON from response - look for { ... } pattern
+  const jsonMatch = originalText.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    throw new Error(`Failed to find JSON object in Claude response.\nRaw output:\n${originalText}`);
   }
+
+  try {
+    // Parse the extracted JSON
+    review = JSON.parse(jsonMatch[0]);
+  } catch (parseErr) {
+    throw new Error(`Failed to parse Claude response as JSON.\nError: ${parseErr.message}\nExtracted text:\n${jsonMatch[0]}`);
+  }
+
+  // Ensure the response has the expected structure
+  if (!review.comments) review.comments = [];
+  if (!Array.isArray(review.comments)) review.comments = [];
+  if (!review.summary) review.summary = 'AI code review complete.';
 
   // Extract comments and summary from the parsed response
   // Default to empty comments and generic summary if not provided
