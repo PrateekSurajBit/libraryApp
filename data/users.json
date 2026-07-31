@@ -4,6 +4,7 @@
     "name": "Jane Doe",
     "email": "jane@example.com",
     "address": "123 Main St, Springfield, IL 62701",
+    "interests": ["programming", "software design", "technology"],
     "isAdmin": true,
     "assignedBooks": []
   },
@@ -12,6 +13,7 @@
     "name": "John Smith",
     "email": "john.smith@example.com",
     "address": "456 Oak Ave, Chicago, IL 60601",
+    "interests": ["fiction", "mystery", "adventure"],
     "isAdmin": false,
     "assignedBooks": []
   },
@@ -20,6 +22,7 @@
     "name": "Alice Johnson",
     "email": "alice.j@example.com",
     "address": "789 Elm Rd, Aurora, IL 60505",
+    "interests": ["science", "history", "biography"],
     "isAdmin": false,
     "assignedBooks": []
   },
@@ -28,6 +31,7 @@
     "name": "Bob Wilson",
     "email": "bob.wilson@example.com",
     "address": "321 Pine Lane, Naperville, IL 60540",
+    "interests": ["philosophy", "literature", "poetry"],
     "isAdmin": false,
     "assignedBooks": []
   },
@@ -36,6 +40,7 @@
     "name": "Sarah Davis",
     "email": "sarah.d@example.com",
     "address": "654 Maple Dr, Evanston, IL 60201",
+    "interests": ["self-help", "psychology", "wellness"],
     "isAdmin": false,
     "assignedBooks": []
   }

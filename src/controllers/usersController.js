@@ -6,7 +6,7 @@ const getAllUsers = (req, res) => {
 };
 
 const addUser = (req, res) => {
-  const { name, email } = req.body;
+  const { name, email, interests } = req.body;
 
   if (!name || !email) {
     return res.status(400).json({ error: 'name and email are required' });
@@ -23,6 +23,7 @@ const addUser = (req, res) => {
     name,
     email,
     address: null,
+    interests: Array.isArray(interests) ? interests : [],
     isAdmin: false,
     assignedBooks: [],
   };
@@ -34,10 +35,10 @@ const addUser = (req, res) => {
 
 const updateUser = (req, res) => {
   const { id } = req.params;
-  const { name, address } = req.body;
+  const { name, address, interests } = req.body;
 
-  if (!name && !address) {
-    return res.status(400).json({ error: 'At least one field (name or address) is required' });
+  if (!name && !address && !interests) {
+    return res.status(400).json({ error: 'At least one field (name, address, or interests) is required' });
   }
 
   const users = readData('users.json');
@@ -53,6 +54,10 @@ const updateUser = (req, res) => {
 
   if (address) {
     users[userIndex].address = address;
+  }
+
+  if (interests) {
+    users[userIndex].interests = Array.isArray(interests) ? interests : [];
   }
 
   writeData('users.json', users);
